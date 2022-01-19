@@ -8,8 +8,13 @@ from .models import PersonDetails
 from .serializers import PersonSerializers
 from .serializers import UserSerializer
 from django.contrib.auth.models import User
+from rest_framework.decorators import authentication_classes, permission_classes
+from rest_framework.authentication import BasicAuthentication, SessionAuthentication
+from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser, IsAuthenticatedOrReadOnly, DjangoModelPermissions, DjangoModelPermissionsOrAnonReadOnly
 # Create your views here.
 
+@authentication_classes([BasicAuthentication])
+@permission_classes([DjangoModelPermissionsOrAnonReadOnly])
 @api_view(['GET', 'POST', 'PUT', 'PATCH', 'DELETE'])
 def personView(request, pk=None):
     if request.method == 'GET':

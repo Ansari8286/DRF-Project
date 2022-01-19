@@ -5,9 +5,17 @@ from rest_framework import status
 from .models import PersonDetails
 from .serializers import PersonSerializers
 from django.core.exceptions import ValidationError
+from rest_framework.decorators import authentication_classes, permission_classes
+from rest_framework.authentication import BasicAuthentication, SessionAuthentication, TokenAuthentication
+from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser, IsAuthenticatedOrReadOnly, DjangoModelPermissions, DjangoModelPermissionsOrAnonReadOnly
 # Create your views here.
 
+# @authentication_classes([BasicAuthentication])
+# @permission_classes([IsAuthenticated])
 class PersonAPIView(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    
     def get(self, request, pk=None, format=None):
         id=pk
         if id is not None:
