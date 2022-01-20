@@ -8,13 +8,52 @@ from django.core.exceptions import ValidationError
 from rest_framework.decorators import authentication_classes, permission_classes
 from rest_framework.authentication import BasicAuthentication, SessionAuthentication, TokenAuthentication
 from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser, IsAuthenticatedOrReadOnly, DjangoModelPermissions, DjangoModelPermissionsOrAnonReadOnly
+from rest_framework.pagination import PageNumberPagination, LimitOffsetPagination, CursorPagination
 # Create your views here.
+
+class CutomPageNumberPagination(PageNumberPagination):
+    page_size = 2
+    page_query_param = "mypage"
+    page_size_query_param = "records"
+    max_page_size = 8
+    last_page_string = "end"
+
+class CustomLimitOffsetPagination(LimitOffsetPagination):
+    default_limit = 3
+    limit_query_param = "mylimit"
+    offset_query_param = "myoffset"
+    max_limit = 8
+
+class CustomCursorPagination(CursorPagination):
+    page_size = 5
+    ordering = "name"
+    cursor_query_param = "Name"
 
 # @authentication_classes([BasicAuthentication])
 # @permission_classes([IsAuthenticated])
 class PersonAPIView(APIView):
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
+    # authentication_classes = [TokenAuthentication]
+    # permission_classes = [IsAuthenticated]
+    pagination_class = CutomPageNumberPagination
+    serializer_class = PersonSerializers
+    @property
+    def paginator(self):
+        if not hasattr(self, '_paginator'):
+            if self.pagination_class is None:
+                self._paginator = None
+            else:
+                self._paginator = self.pagination_class()
+        else:
+            pass
+        return self._paginator
+    def paginate_queryset(self, queryset):
+        
+        if self.paginator is None:
+            return None
+        return self.paginator.paginate_queryset(queryset, self.request, view=self)
+    def get_paginated_response(self, data):
+        assert self.paginator is not None
+        return self.paginator.get_paginated_response(data)
     
     def get(self, request, pk=None, format=None):
         id=pk
@@ -27,7 +66,12 @@ class PersonAPIView(APIView):
                 message = {'message': 'No date avilable'}
                 return Response(message, status=status.HTTP_400_BAD_REQUEST)
         pd = PersonDetails.objects.all()
-        serializer = PersonSerializers(pd, many=True)
+        page = self.paginate_queryset(pd)
+        if page is not None:
+            serializer = self.get_paginated_response(self.serializer_class(page, many=True).data)
+        else:
+            serializer = self.serializer_class(pd, many=True)
+        # serializer = PersonSerializers(pd, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request, format=None):
