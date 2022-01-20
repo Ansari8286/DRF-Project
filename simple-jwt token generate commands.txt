@@ -1,0 +1,4 @@
+http http://127.0.0.1:8000/gettoken/ username="" password=""
+http http://127.0.0.1:8000/verifiy/ token=""
+http http://127.0.0.1:8000/personview/ 'Authorization:Bearer '
+http http://127.0.0.1:8000/refresh/ refresh=""
