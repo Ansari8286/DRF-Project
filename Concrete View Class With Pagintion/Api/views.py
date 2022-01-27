@@ -1,6 +1,5 @@
-from .models import PersonDetails
-from .serializers import PersonSerializers
-from .serializers import PersonSerializers
+from .models import HotelDetail
+from .serializers import HotelSerializers
 from rest_framework.authentication import BasicAuthentication, SessionAuthentication, TokenAuthentication
 from rest_framework.generics import ListAPIView, CreateAPIView, RetrieveAPIView, UpdateAPIView, DestroyAPIView, ListCreateAPIView, RetrieveUpdateAPIView, RetrieveDestroyAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.permissions import IsAdminUser, DjangoModelPermissionsOrAnonReadOnly, IsAuthenticated
@@ -27,17 +26,22 @@ class CustomCursorPagination(CursorPagination):
 # Create your views here.
 
 class PersonListCreateView(ListCreateAPIView):
-    queryset = PersonDetails.objects.all()
-    serializer_class = PersonSerializers
+    queryset = HotelDetail.objects.all()
+    serializer_class = HotelSerializers
     pagination_class = CutomPageNumberPagination
 
     authentication_classes = [SessionAuthentication]
-    permission_classes = [IsAuthenticated]
+    permission_classes = [DjangoModelPermissionsOrAnonReadOnly]
 
+
+# class PersonRetrieveView(RetrieveAPIView):
+#     queryset = HotelDetail.objects.all()
+#     serializer_class = HotelSerializers
+    
 
 class PersonRetrieveUpdateDeleteView(RetrieveUpdateDestroyAPIView):
-    queryset = PersonDetails.objects.all()
-    serializer_class = PersonSerializers
+    queryset = HotelDetail.objects.all()
+    serializer_class = HotelSerializers
     
     authentication_classes = [SessionAuthentication]
-    permission_classes = [IsAuthenticated]
+    permission_classes = [DjangoModelPermissionsOrAnonReadOnly]

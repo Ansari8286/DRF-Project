@@ -14,11 +14,11 @@ class PersonListCreateView(ListModelMixin, CreateModelMixin, GenericAPIView):
 
     # authentication_classes = [SessionAuthentication]
     # authentication_classes = [BasicAuthentication]
-    authentication_classes = [TokenAuthentication]
+    # authentication_classes = [TokenAuthentication]
 
     # permission_classes = [AllowAny]
     # permission_classes = [IsAdminUser]
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
     # permission_classes = [DjangoModelPermissions]
     # permission_classes = [IsAuthenticatedOrReadOnly]
     # permission_classes = [DjangoModelPermissionsOrAnonReadOnly]
@@ -34,8 +34,8 @@ class PersonRetrieveUpdateDeleteView(RetrieveModelMixin, UpdateModelMixin, Destr
     queryset = PersonDetails.objects.all()
     serializer_class = PersonSerializers
 
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [DjangoModelPermissionsOrAnonReadOnly]
+    # authentication_classes = [TokenAuthentication]
+    # permission_classes = [DjangoModelPermissionsOrAnonReadOnly]
 
     def get(self, request, *args, **kwargs):
         return self.retrieve(request, *args, **kwargs)
